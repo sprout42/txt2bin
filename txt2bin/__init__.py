@@ -1,4 +1,6 @@
+import enum
 import shutil
+import argparse
 import operator
 import collections
 
@@ -12,7 +14,10 @@ __all__ = [
 ]
 
 
-TXT2BIN_FILETYPES = ('auto', 'ihex', 'srec')
+class TXT2BIN_FILETYPE(enum.Enum):
+    AUTO = 'auto'
+    IHEX = 'ihex'
+    SREC = 'srec'
 
 
 def guess_filetype(filename):
@@ -25,25 +30,38 @@ def guess_filetype(filename):
         # be the most likely character to appear, for ihex it should be ':'
         chars = [c for c, v in reversed(sorted(first_chars.items(), key=operator.itemgetter(1)))]
         if chars[0] == ':':
-            return 'ihex'
+            return TXT2BIN_FILETYPE.IHEX
         elif chars[0] == 'S':
-            return 'srec'
+            return TXT2BIN_FILETYPE.SREC
         else:
             raise ValueError('Cannot guess filetype for %s. Most common chars: %s' % \
                     (filename, ', '.join(chars)))
 
 
-def parse(filename, filetype):
-    if filetype == 'auto':
-        filetype = guess_filetype(filename)
+def parse(filename, filetype=TXT2BIN_FILETYPE.AUTO):
+    if isinstance(filetype, TXT2BIN_FILETYPE):
+        typ = filetype
+    else:
+        try:
+            typ = TXT2BIN_FILETYPE(filetype)
+        except ValueError:
+            typ = None
+    print(filetype, typ)
+    print(typ == TXT2BIN_FILETYPE.AUTO)
+    print(typ == TXT2BIN_FILETYPE.IHEX)
+    print(typ == TXT2BIN_FILETYPE.SREC)
 
-    if filetype == 'ihex':
+    if typ == TXT2BIN_FILETYPE.AUTO:
+        typ = guess_filetype(filename)
+
+    if typ == TXT2BIN_FILETYPE.IHEX:
         parsed = ihex.parse(filename)
-    elif filetype == 'srec':
+    elif typ == TXT2BIN_FILETYPE.SREC:
         parsed = srec.parse(filename)
     else:
+        options = ', '.join(t.value for t in list(TXT2BIN_FILETYPE))
         raise ValueError('Filetype %s not supported, must be one of %s' % \
-                (filetype, ', '.join(TXT2BIN_FILETYPES)))
+                (filetype, options))
 
 
 def parsed2bin(parsed):
@@ -109,3 +127,24 @@ def merge(filename, origfile, parsed, base=0):
     # Open the new file now so the write() function doesn't truncate it
     with open(filename, 'wb') as f:
         write(f, parsed, base)
+
+
+def main():
+    type_choices = [t.value for t in list(TXT2BIN_FILETYPE)]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-b', '--base', default=0,
+            help='default output file offset (should normally just be 0)')
+    parser.add_argument('-m', '--merge-with', default=None,
+            help='existing binary to merge the xcal with')
+    parser.add_argument('-t', '--type', default='auto',
+            choices=type_choices, help='input file type')
+    parser.add_argument('input', help='input xcal filename')
+    parser.add_argument('output', help='output binary filename')
+
+    args = parser.parse_args()
+
+    parsed = txt2bin.parse(args.input, args.type)
+    if args.merge_with:
+        txt2bin.write(args.output, args.merge_with, parsed, base=args.base)
+    else:
+        txt2bin.write(args.output, parsed, base=args.base)

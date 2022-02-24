@@ -28,41 +28,41 @@ SREC_DATA = (
 )
 
 SREC_COUNT = (
-    COUNT_16BIT,
-    COUNT_24BIT,
+    SREC_CODE.COUNT_16BIT,
+    SREC_CODE.COUNT_24BIT,
 )
 
 SREC_START_ADDR = (
-    START_ADDR_32BIT,
-    START_ADDR_24BIT,
-    START_ADDR_16BIT,
+    SREC_CODE.START_ADDR_32BIT,
+    SREC_CODE.START_ADDR_24BIT,
+    SREC_CODE.START_ADDR_16BIT,
 )
 
 
 
 # Precalculated shifts and ranges for different address sizes:
 SREC_ADDR_RANGES = {
-    HEADER: range(1, 3),
-    DATA_16BIT_ADDR: range(1, 3),
-    DATA_24BIT_ADDR: range(1, 4),
-    DATA_32BIT_ADDR: range(1, 5),
-    COUNT_16BIT: range(1, 3),
-    COUNT_24BIT: range(1, 4),
-    START_ADDR_32BIT: range(1, 3),
-    START_ADDR_24BIT: range(1, 4),
-    START_ADDR_16BIT: range(1, 5),
+    SREC_CODE.HEADER: range(1, 3),
+    SREC_CODE.DATA_16BIT_ADDR: range(1, 3),
+    SREC_CODE.DATA_24BIT_ADDR: range(1, 4),
+    SREC_CODE.DATA_32BIT_ADDR: range(1, 5),
+    SREC_CODE.COUNT_16BIT: range(1, 3),
+    SREC_CODE.COUNT_24BIT: range(1, 4),
+    SREC_CODE.START_ADDR_32BIT: range(1, 3),
+    SREC_CODE.START_ADDR_24BIT: range(1, 4),
+    SREC_CODE.START_ADDR_16BIT: range(1, 5),
 }
 
 SREC_ADDR_SHIFTS = {
-    HEADER: (8, 0),
-    DATA_16BIT_ADDR: (8, 0),
-    DATA_24BIT_ADDR: (16, 8, 0),
-    DATA_32BIT_ADDR: (24, 16, 8, 0),
-    COUNT_16BIT: (8, 0),
-    COUNT_24BIT: (16, 8, 0),
-    START_ADDR_32BIT: (8, 0),
-    START_ADDR_24BIT: (16, 8, 0),
-    START_ADDR_16BIT: (24, 16, 8, 0),
+    SREC_CODE.HEADER: (8, 0),
+    SREC_CODE.DATA_16BIT_ADDR: (8, 0),
+    SREC_CODE.DATA_24BIT_ADDR: (16, 8, 0),
+    SREC_CODE.DATA_32BIT_ADDR: (24, 16, 8, 0),
+    SREC_CODE.COUNT_16BIT: (8, 0),
+    SREC_CODE.COUNT_24BIT: (16, 8, 0),
+    SREC_CODE.START_ADDR_32BIT: (8, 0),
+    SREC_CODE.START_ADDR_24BIT: (16, 8, 0),
+    SREC_CODE.START_ADDR_16BIT: (24, 16, 8, 0),
 }
 
 
