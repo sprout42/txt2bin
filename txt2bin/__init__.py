@@ -46,10 +46,6 @@ def parse(filename, filetype=TXT2BIN_FILETYPE.AUTO):
             typ = TXT2BIN_FILETYPE(filetype)
         except ValueError:
             typ = None
-    print(filetype, typ)
-    print(typ == TXT2BIN_FILETYPE.AUTO)
-    print(typ == TXT2BIN_FILETYPE.IHEX)
-    print(typ == TXT2BIN_FILETYPE.SREC)
 
     if typ == TXT2BIN_FILETYPE.AUTO:
         typ = guess_filetype(filename)
