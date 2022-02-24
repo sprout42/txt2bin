@@ -78,8 +78,8 @@ def checksum(data, init=0):
 
 def get_addr(data, code):
     addr = 0
-    for i in SREC_ADDR_RANGES[code]:
-        addr |= data[i] << SREC_ADDR_SHIFTS[code]
+    for shift, idx in zip(SREC_ADDR_SHIFTS[code], SREC_ADDR_RANGES[code]):
+        addr |= data[idx] << shift
     return addr
 
 

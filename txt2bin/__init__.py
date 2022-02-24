@@ -51,9 +51,9 @@ def parse(filename, filetype=TXT2BIN_FILETYPE.AUTO):
         typ = guess_filetype(filename)
 
     if typ == TXT2BIN_FILETYPE.IHEX:
-        parsed = ihex.parse(filename)
+        return ihex.parse(filename)
     elif typ == TXT2BIN_FILETYPE.SREC:
-        parsed = srec.parse(filename)
+        return srec.parse(filename)
     else:
         options = ', '.join(t.value for t in list(TXT2BIN_FILETYPE))
         raise ValueError('Filetype %s not supported, must be one of %s' % \
@@ -139,8 +139,13 @@ def main():
 
     args = parser.parse_args()
 
-    parsed = txt2bin.parse(args.input, args.type)
-    if args.merge_with:
-        txt2bin.write(args.output, args.merge_with, parsed, base=args.base)
+    if args.base and args.base.startswith('0x'):
+        base = int(args.base, 16)
     else:
-        txt2bin.write(args.output, parsed, base=args.base)
+        base = int(args.base)
+
+    parsed = parse(args.input, args.type)
+    if args.merge_with:
+        write(args.output, args.merge_with, parsed, base=base)
+    else:
+        write(args.output, parsed, base=base)
